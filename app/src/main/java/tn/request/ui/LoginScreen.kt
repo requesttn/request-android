@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.koin.androidx.compose.get
+import org.koin.androidx.compose.inject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,14 +26,14 @@ import tn.request.network.model.LoginRequest
 import tn.request.network.model.LoginResponse
 import tn.request.ui.theme.RequestTheme
 
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(backendService: BackendService) {
+
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
-
-    val backendService = BackendService()
 
     Surface(
         modifier = Modifier
@@ -150,6 +152,6 @@ fun LoginButton(onLogin: () -> Unit) {
 @Composable
 fun DefaultView() {
     RequestTheme {
-        LoginScreen()
+        LoginScreen(get())
     }
 }
