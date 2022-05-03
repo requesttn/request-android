@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
@@ -13,6 +14,9 @@ import tn.request.ui.theme.RequestTheme
 
 @Composable
 fun LoginScreen() {
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -21,11 +25,15 @@ fun LoginScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-        EmailTextField()
+        EmailTextField(email) {
+            email = it
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        PasswordTextField()
+        PasswordTextField(password) {
+            password = it
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -36,28 +44,26 @@ fun LoginScreen() {
 }
 
 @Composable
-fun EmailTextField() {
-    var emailValue by remember { mutableStateOf(TextFieldValue("")) }
-
+fun EmailTextField(email: String, onEmailChange: (String) -> Unit) {
     TextField(
-        value = emailValue,
-        onValueChange = { emailValue = it },
+        value = email,
+        onValueChange = onEmailChange,
         modifier = Modifier.fillMaxWidth(),
         label = { Text("Email") },
-        singleLine = true
+        singleLine = true,
+        placeholder = { Text("user@email.com") }
     )
 }
 
 @Composable
-fun PasswordTextField() {
-    var passwordValue by remember { mutableStateOf(TextFieldValue("")) }
-
+fun PasswordTextField(password: String, onPasswordChange: (String) -> Unit) {
     TextField(
-        value = passwordValue,
-        onValueChange = { passwordValue = it },
+        value = password,
+        onValueChange = onPasswordChange,
         modifier = Modifier.fillMaxWidth(),
         label = { Text("Password") },
-        singleLine = true
+        singleLine = true,
+        placeholder = { Text("**********") }
     )
 }
 
@@ -66,7 +72,9 @@ fun LoginButton(onLogin: () -> Unit) {
     Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.fillMaxWidth()) {
         Button(
             onClick = onLogin,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
             shape = RoundedCornerShape(12.dp)
 
         ) {
