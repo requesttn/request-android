@@ -10,19 +10,20 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import tn.request.ui.theme.RequestandroidTheme
+import tn.request.ui.LoginScreen
+import tn.request.ui.theme.RequestTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RequestandroidTheme {
+            RequestTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    LoginScreen()
                 }
             }
         }
@@ -37,7 +38,7 @@ fun Greeting(name: String) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    RequestandroidTheme {
+    RequestTheme {
         Greeting("Android")
     }
 }
