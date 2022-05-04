@@ -1,6 +1,6 @@
-package tn.request.network.model
+package tn.request.model
 
-data class UserResponse(
+data class User(
     val firstname: String,
     val lastname: String,
     val email: String

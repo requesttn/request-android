@@ -1,37 +1,32 @@
 package tn.request.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.get
-import org.koin.androidx.compose.inject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import tn.request.network.BackendService
-import tn.request.network.model.LoginRequest
-import tn.request.network.model.LoginResponse
+import tn.request.model.Status
 import tn.request.ui.theme.RequestTheme
 
 
 @Composable
-fun LoginScreen(backendService: BackendService) {
+fun LoginScreen(viewModel: LoginViewModel) {
 
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    val userLoginState by viewModel.userLoginEvent.observeAsState()
 
     val focusManager = LocalFocusManager.current
 
@@ -42,70 +37,74 @@ fun LoginScreen(backendService: BackendService) {
         color = MaterialTheme.colors.background,
 
         ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        when (userLoginState?.status ?: Status.ERROR) {
+            Status.IDLE, Status.ERROR -> {
+                LoginViewContent(viewModel)
 
-            ) {
-            EmailTextField(email) {
-                email = it
+                if (userLoginState!!.status == Status.ERROR) {
+                    Toast.makeText(
+                        get(),
+                        userLoginState!!.message ?: "Unknown error",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            PasswordTextField(password) {
-                password = it
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            val context = LocalContext.current
-            LoginButton {
-                backendService.login(
-                    LoginRequest(
-                        email, password
-                    )
-                ).enqueue(object : Callback<LoginResponse> {
-                    override fun onResponse(
-                        call: Call<LoginResponse>,
-                        response: Response<LoginResponse>
+            Status.LOADING -> {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    LoginViewContent(viewModel)
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                            .background(color = Color.Black.copy(alpha = 0.25f))
+                            .clickable {  },
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (response.isSuccessful) {
-                            Toast.makeText(
-                                context, """
-                                Login Succeed
-                                ${response.body()}
-                            """.trimIndent(), Toast.LENGTH_LONG
-                            ).show()
-
-                            println("Login Succeed : ${response.body()}")
-                        } else {
-                            Toast.makeText(
-                                context, """
-                                Login Failed
-                                ${response.errorBody()?.string()}
-                            """.trimIndent(), Toast.LENGTH_LONG
-                            ).show()
-                        }
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(50.dp, 50.dp)
+                        )
                     }
-
-                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                        Toast.makeText(
-                            context, """
-                                Login Failed with an exception
-                                $t
-                            """.trimIndent(), Toast.LENGTH_LONG
-                        ).show()
-                    }
-
-                })
+                }
+            }
+            Status.SUCCESS -> {
+                LoginViewContent(viewModel)
+                Toast.makeText(get(), "Navigating to home screen...", Toast.LENGTH_LONG).show()
             }
         }
     }
 
+}
+
+@Composable
+fun LoginViewContent(viewModel: LoginViewModel) {
+
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
+        EmailTextField(email) {
+            email = it
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        PasswordTextField(password) {
+            password = it
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        LoginButton {
+            viewModel.login(email, password)
+        }
+    }
 }
 
 @Composable
@@ -128,7 +127,7 @@ fun PasswordTextField(password: String, onPasswordChange: (String) -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         label = { Text("Password") },
         singleLine = true,
-        placeholder = { Text("**********") }
+        placeholder = { Text("****************") }
     )
 }
 

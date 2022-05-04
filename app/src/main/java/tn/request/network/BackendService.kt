@@ -5,8 +5,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
-import tn.request.network.model.LoginRequest
-import tn.request.network.model.LoginResponse
+import tn.request.network.dto.LoginRequest
+import tn.request.network.dto.LoginResponse
 
 interface BackendService {
     @POST("login")

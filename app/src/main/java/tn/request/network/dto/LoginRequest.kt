@@ -1,4 +1,4 @@
-package tn.request.network.model
+package tn.request.network.dto
 
 data class LoginRequest(
     val email: String,

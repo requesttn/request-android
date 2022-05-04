@@ -1,22 +1,17 @@
 package tn.request.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import org.koin.android.ext.android.get
+import androidx.fragment.app.FragmentActivity
+import tn.request.R
 import tn.request.ui.theme.RequestTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            RequestTheme {
-                LoginScreen(get())
-            }
-        }
+        setContentView(R.layout.activity_main)
     }
 }
 
