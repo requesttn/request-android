@@ -24,7 +24,7 @@ import tn.request.ui.theme.RequestTheme
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel, onLoginSucceed: () -> Unit) {
 
     val userLoginState by viewModel.userLoginEvent.observeAsState()
 
@@ -67,7 +67,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 }
             }
             Status.SUCCESS -> {
-                LoginViewContent(viewModel)
+                onLoginSucceed()
                 Toast.makeText(get(), "Navigating to home screen...", Toast.LENGTH_LONG).show()
             }
         }
@@ -151,6 +151,6 @@ fun LoginButton(onLogin: () -> Unit) {
 @Composable
 fun DefaultView() {
     RequestTheme {
-        LoginScreen(get())
+        LoginScreen(get(), {})
     }
 }

@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import org.koin.androidx.compose.get
-import tn.request.R
 import tn.request.ui.theme.RequestTheme
 
-class LoginFragment : Fragment() {
+class HomeFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -21,11 +21,7 @@ class LoginFragment : Fragment() {
         ).apply {
             setContent {
                 RequestTheme {
-                    LoginScreen(get()) {
-                        activity?.supportFragmentManager?.beginTransaction()
-                            ?.replace(R.id.fragment_container_view, HomeFragment())
-                            ?.commit()
-                    }
+                    HomeScreen(viewModel = get())
                 }
             }
         }

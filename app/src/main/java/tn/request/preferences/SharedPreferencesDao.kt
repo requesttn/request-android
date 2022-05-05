@@ -7,8 +7,8 @@ import tn.request.R
 class SharedPreferencesDao(context: Context) {
     companion object {
         private const val USER_FIRSTNAME = "user_firstname";
-        private const val USER_LASTNAME = "user_firstname";
-        private const val USER_EMAIL = "user_firstname";
+        private const val USER_LASTNAME = "user_lastname";
+        private const val USER_EMAIL = "user_email";
 
         private const val USER_JWT = "user_jwt";
     }
