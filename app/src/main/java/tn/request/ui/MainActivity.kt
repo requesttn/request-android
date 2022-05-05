@@ -20,6 +20,12 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if (preferencesDao.getCurrentUser() != null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_view, HomeFragment())
+                .commit()
+        }
+
         preferencesDao.getCurrentUser()?.let {
             Log.d(TAG, "Current User JWT: ${it.jwt}")
             Log.d(TAG, "Current User Firstname: ${it.firstname}")
