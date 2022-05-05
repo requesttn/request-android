@@ -10,4 +10,8 @@ class HomeViewModel(
 
     val currentUser = MutableLiveData(preferencesDao.getCurrentUser())
 
+    fun logout() {
+        preferencesDao.clearCurrentUser()
+    }
+
 }

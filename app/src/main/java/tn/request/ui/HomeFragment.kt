@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import org.koin.androidx.compose.get
+import tn.request.R
 import tn.request.ui.theme.RequestTheme
 
 class HomeFragment : Fragment() {
@@ -21,7 +22,13 @@ class HomeFragment : Fragment() {
         ).apply {
             setContent {
                 RequestTheme {
-                    HomeScreen(viewModel = get())
+                    val homeViewModel: HomeViewModel = get()
+                    HomeScreen(homeViewModel) {
+                        homeViewModel.logout()
+                        activity?.supportFragmentManager?.beginTransaction()
+                            ?.replace(R.id.fragment_container_view, LoginFragment())
+                            ?.commit()
+                    }
                 }
             }
         }
