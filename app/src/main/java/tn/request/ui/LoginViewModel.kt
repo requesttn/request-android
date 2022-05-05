@@ -27,7 +27,7 @@ class LoginViewModel(
                         Resource.success(Unit)
                     } else {
                         when (response.code()) {
-                            400 -> Resource.error("Email or password is invalid", Unit)
+                            403 -> Resource.error("Email or password is invalid", Unit)
                             500 -> Resource.error(
                                 "Internal server error, please try again later",
                                 Unit
