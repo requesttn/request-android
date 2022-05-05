@@ -6,11 +6,16 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import tn.request.model.Resource
+import tn.request.model.User
 import tn.request.network.BackendService
 import tn.request.network.dto.LoginRequest
+import tn.request.network.dto.LoginResponse
+import tn.request.preferences.CurrentUser
+import tn.request.preferences.SharedPreferencesDao
 
 class LoginViewModel(
-    private val backendService: BackendService
+    private val backendService: BackendService,
+    private val preferencesDao: SharedPreferencesDao,
 ) : ViewModel() {
 
     private val internalUserLoginEvent = MutableLiveData<Resource<Unit>>(Resource.idle())
@@ -24,6 +29,7 @@ class LoginViewModel(
                 val response = backendService.login(LoginRequest(email, password)).execute()
                 internalUserLoginEvent.postValue(
                     if (response.isSuccessful) {
+                        saveCurrentUser(response.body()!!)
                         Resource.success(Unit)
                     } else {
                         when (response.code()) {
@@ -48,5 +54,20 @@ class LoginViewModel(
             }
 
         }
+    }
+
+    /**
+     * Save logged-in user's information and jwt token in a persistent storage location.
+     * */
+    private fun saveCurrentUser(response: LoginResponse) {
+        val user = response.user;
+        preferencesDao.setCurrentUser(
+            CurrentUser(
+                response.jwt,
+                user.firstname,
+                user.lastname,
+                user.email
+            )
+        )
     }
 }

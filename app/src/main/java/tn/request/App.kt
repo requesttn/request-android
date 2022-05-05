@@ -6,6 +6,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import tn.request.network.BackendService
+import tn.request.preferences.SharedPreferencesDao
 import tn.request.ui.LoginViewModel
 
 class App : Application() {
@@ -13,10 +14,14 @@ class App : Application() {
         single {
             BackendService()
         }
+
+        single {
+            SharedPreferencesDao(get())
+        }
     }
 
     private val viewModelsModule = module {
-        factory { LoginViewModel(get()) }
+        factory { LoginViewModel(get(), get()) }
     }
 
     override fun onCreate() {
