@@ -26,7 +26,9 @@ class LoginViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             internalUserLoginEvent.postValue(Resource.loading(Unit))
             try {
-                val response = backendService.login(LoginRequest(email, password)).execute()
+                val response =
+                    backendService.login(LoginRequest(sanitized(email), sanitized(password)))
+                        .execute()
                 internalUserLoginEvent.postValue(
                     if (response.isSuccessful) {
                         saveCurrentUser(response.body()!!)
@@ -69,5 +71,13 @@ class LoginViewModel(
                 user.email
             )
         )
+    }
+
+    /**
+     * Clean the input by removing unwelcomed characters such as line breaks, extra white spaces, tabs, &, and tags.
+     * */
+    private fun sanitized(value: String): String {
+        return value.trim()
+            .replace("\n", "")
     }
 }
